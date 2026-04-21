@@ -39,6 +39,19 @@ static void string_copy(char *dest, const char *src, int max_len)
     dest[i] = '\0';
 }
 
+/* Return the length of a string. */
+static int string_length(const char *str)
+{
+    int len = 0;
+
+    while (str[len] != '\0')
+    {
+        len = len + 1;
+    }
+
+    return len;
+}
+
 /* Reset the RAM file system to an empty state. */
 void ramfs_init(void)
 {
@@ -82,9 +95,36 @@ int ramfs_create(const char *name)
             ramfs.files[i].used = 1;
             ramfs.files[i].size = 0;
             string_copy(ramfs.files[i].name, name, RAMFS_MAX_FILENAME);
+            ramfs.files[i].data[0] = '\0';
             return 0;
         }
     }
 
     return -2;
+}
+
+/* Write new content into an existing file. */
+int ramfs_write(const char *name, const char *data)
+{
+    int i;
+    int len;
+
+    len = string_length(data);
+
+    if (len >= RAMFS_MAX_FILESIZE)
+    {
+        return -2;
+    }
+
+    for (i = 0; i < RAMFS_MAX_FILES; i = i + 1)
+    {
+        if (ramfs.files[i].used == 1 && strings_equal(ramfs.files[i].name, name) == 1)
+        {
+            string_copy(ramfs.files[i].data, data, RAMFS_MAX_FILESIZE);
+            ramfs.files[i].size = len;
+            return 0;
+        }
+    }
+
+    return -1;
 }

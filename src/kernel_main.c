@@ -18,6 +18,7 @@ void main(void)
 {
     int first_result;
     int second_result;
+    int write_result;
 
     puts("COMP 310 project booted successfully.\n");
     puts("Terminal output layer is working.\n");
@@ -45,6 +46,17 @@ void main(void)
     else
     {
         puts("Second create did not fail as expected.\n");
+    }
+
+    write_result = ramfs_write("notes.txt", "hello from ramfs");
+
+    if (write_result == 0)
+    {
+        puts("Write succeeded for notes.txt\n");
+    }
+    else
+    {
+        puts("Write failed for notes.txt\n");
     }
 
     while (1)

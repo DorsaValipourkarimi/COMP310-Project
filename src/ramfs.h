@@ -29,4 +29,7 @@ void ramfs_init(void);
 /* Create a file with the given name. */
 int ramfs_create(const char *name);
 
+/* Write text into an existing file. */
+int ramfs_write(const char *name, const char *data);
+
 #endif
