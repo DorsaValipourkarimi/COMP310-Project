@@ -5,6 +5,7 @@
 
 #define VCS_MAX_BLOBS 16
 #define VCS_MAX_TREE_ENTRIES 16
+#define VCS_MAX_COMMITS 16
 #define VCS_MAX_COMMIT_MESSAGE 64
 
 /* One file snapshot stored by the VCS. */
@@ -48,7 +49,7 @@ typedef struct
 {
     vcs_blob_t blobs[VCS_MAX_BLOBS];
     vcs_tree_t trees[VCS_MAX_TREE_ENTRIES];
-    vcs_commit_t commits[VCS_MAX_BLOBS];
+    vcs_commit_t commits[VCS_MAX_COMMITS];
     vcs_commit_t *head;
     int initialized;
 } vcs_t;
@@ -56,7 +57,10 @@ typedef struct
 /* Global VCS instance. */
 extern vcs_t vcs;
 
-/* Initialize the VCS state. */
+/* Initialize all VCS structures as empty. */
 void vcs_init(void);
+
+/* Hash a string using FNV-1a. */
+unsigned int fnv1a_hash(const char *data);
 
 #endif

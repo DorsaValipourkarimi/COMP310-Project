@@ -12,8 +12,33 @@ const unsigned int multiboot_header[] __attribute__((section(".multiboot"))) = {
     24,
     -(MULTIBOOT2_HEADER_MAGIC + 24),
     0,
-    8
-};
+    8};
+
+/* Print an unsigned int in decimal form. */
+static void print_uint(unsigned int value)
+{
+    char buffer[16];
+    int i = 0;
+
+    if (value == 0)
+    {
+        putc('0');
+        return;
+    }
+
+    while (value > 0)
+    {
+        buffer[i] = (char)('0' + (value % 10));
+        value = value / 10;
+        i = i + 1;
+    }
+
+    while (i > 0)
+    {
+        i = i - 1;
+        putc(buffer[i]);
+    }
+}
 
 void main(void)
 {
@@ -22,12 +47,15 @@ void main(void)
     int write_result;
     int delete_result;
     const char *content;
+    unsigned int hash1;
+    unsigned int hash2;
+    unsigned int hash3;
 
-    //Phase 0
+    // Phase 0
     puts("COMP 310 project booted successfully.\n");
     puts("Terminal output layer is working.\n");
 
-    //Phase 1
+    // Phase 1
     ramfs_init();
     puts("RAMFS initialized.\n");
 
@@ -100,12 +128,43 @@ void main(void)
         puts("Read after delete did not fail as expected.\n");
     }
 
-
-
-    //Phase 2
+    // Phase 2
     vcs_init();
-    puts("\nVCS initialized.\n");
+    puts("VCS initialized.\n");
 
+    hash1 = fnv1a_hash("hello from ramfs");
+    hash2 = fnv1a_hash("hello from ramfs");
+    hash3 = fnv1a_hash("different text");
+
+    puts("Hash test 1: ");
+    print_uint(hash1);
+    puts("\n");
+
+    puts("Hash test 2: ");
+    print_uint(hash2);
+    puts("\n");
+
+    puts("Hash test 3: ");
+    print_uint(hash3);
+    puts("\n");
+
+    if (hash1 == hash2)
+    {
+        puts("Matching content produced matching hashes.\n");
+    }
+    else
+    {
+        puts("Matching content did not produce matching hashes.\n");
+    }
+
+    if (hash1 != hash3)
+    {
+        puts("Different content produced different hashes.\n");
+    }
+    else
+    {
+        puts("Different content did not produce different hashes.\n");
+    }
 
     while (1)
     {
