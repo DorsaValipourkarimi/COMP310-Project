@@ -50,6 +50,10 @@ void main(void)
     int tree_index;
     int tree_add_result;
     int commit_index;
+    int second_blob_index;
+    int second_tree_index;
+    int second_tree_add_result;
+    int second_commit_index;
     const char *content;
     unsigned int hash1;
     unsigned int hash2;
@@ -132,7 +136,7 @@ void main(void)
         puts("Read after delete did not fail as expected.\n");
     }
 
-    /* Phase 2 */
+    /* Phase 2 Hash */
     vcs_init();
     puts("VCS initialized.\n");
 
@@ -307,6 +311,143 @@ void main(void)
     else
     {
         puts("Commit creation failed.\n");
+    }
+
+    /* Phase 2 Commit Chain */
+    first_result = ramfs_create("story2.txt");
+
+    if (first_result == 0)
+    {
+        puts("Second blob test file create succeeded: story2.txt\n");
+    }
+    else
+    {
+        puts("Second blob test file create failed: story2.txt\n");
+    }
+
+    write_result = ramfs_write("story2.txt", "hello second blob");
+
+    if (write_result == 0)
+    {
+        puts("Second blob test file write succeeded: story2.txt\n");
+    }
+    else
+    {
+        puts("Second blob test file write failed: story2.txt\n");
+    }
+
+    second_blob_index = vcs_create_blob_from_file("story2.txt");
+
+    if (second_blob_index >= 0)
+    {
+        puts("Second blob creation from RAMFS succeeded.\n");
+
+        puts("Second blob index: ");
+        print_uint((unsigned int)second_blob_index);
+        puts("\n");
+
+        puts("Second blob filename: ");
+        puts(vcs.blobs[second_blob_index].filename);
+        puts("\n");
+
+        puts("Second blob contents: ");
+        puts(vcs.blobs[second_blob_index].data);
+        puts("\n");
+
+        puts("Second blob size: ");
+        print_uint((unsigned int)vcs.blobs[second_blob_index].size);
+        puts("\n");
+
+        puts("Second blob hash: ");
+        print_uint(vcs.blobs[second_blob_index].hash);
+        puts("\n");
+    }
+    else
+    {
+        puts("Second blob creation from RAMFS failed.\n");
+    }
+
+    second_tree_index = vcs_create_tree();
+
+    if (second_tree_index >= 0)
+    {
+        puts("Second tree creation succeeded.\n");
+
+        puts("Second tree index: ");
+        print_uint((unsigned int)second_tree_index);
+        puts("\n");
+    }
+    else
+    {
+        puts("Second tree creation failed.\n");
+    }
+
+    second_tree_add_result = vcs_tree_add_blob(second_tree_index, second_blob_index);
+
+    if (second_tree_add_result == 0)
+    {
+        puts("Second blob added to tree successfully.\n");
+
+        puts("Second tree entry count: ");
+        print_uint((unsigned int)vcs.trees[second_tree_index].entry_count);
+        puts("\n");
+
+        puts("Second tree entry filename: ");
+        puts(vcs.trees[second_tree_index].entries[0].filename);
+        puts("\n");
+
+        puts("Second tree entry blob index: ");
+        print_uint((unsigned int)vcs.trees[second_tree_index].entries[0].blob_index);
+        puts("\n");
+    }
+    else
+    {
+        puts("Second blob add to tree failed.\n");
+    }
+
+    second_commit_index = vcs_create_commit(second_tree_index, "second commit");
+
+    if (second_commit_index >= 0)
+    {
+        puts("Second commit creation succeeded.\n");
+
+        puts("Second commit index: ");
+        print_uint((unsigned int)second_commit_index);
+        puts("\n");
+
+        puts("Second commit message: ");
+        puts(vcs.commits[second_commit_index].message);
+        puts("\n");
+
+        puts("Second commit tree index: ");
+        print_uint((unsigned int)vcs.commits[second_commit_index].tree_index);
+        puts("\n");
+
+        puts("Second commit hash: ");
+        print_uint(vcs.commits[second_commit_index].hash);
+        puts("\n");
+
+        if (vcs.commits[second_commit_index].parent == &vcs.commits[commit_index])
+        {
+            puts("Second commit parent correctly points to first commit.\n");
+        }
+        else
+        {
+            puts("Second commit parent did not point to first commit.\n");
+        }
+
+        if (vcs.head == &vcs.commits[second_commit_index])
+        {
+            puts("VCS head updated to the second commit.\n");
+        }
+        else
+        {
+            puts("VCS head did not update to the second commit.\n");
+        }
+    }
+    else
+    {
+        puts("Second commit creation failed.\n");
     }
 
     while (1)
