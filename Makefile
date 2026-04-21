@@ -39,7 +39,8 @@ ODIR = obj
 SDIR = src
 
 OBJS = \
-	kernel_main.o
+	kernel_main.o \
+	terminal.o
 
 OBJ = $(patsubst %,$(ODIR)/%,$(OBJS))
 
