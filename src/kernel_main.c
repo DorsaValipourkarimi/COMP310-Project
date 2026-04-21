@@ -11,14 +11,14 @@ const unsigned int multiboot_header[] __attribute__((section(".multiboot"))) = {
     24,
     -(MULTIBOOT2_HEADER_MAGIC + 24),
     0,
-    8
-};
+    8};
 
 void main(void)
 {
     int first_result;
     int second_result;
     int write_result;
+    const char *content;
 
     puts("COMP 310 project booted successfully.\n");
     puts("Terminal output layer is working.\n");
@@ -57,6 +57,20 @@ void main(void)
     else
     {
         puts("Write failed for notes.txt\n");
+    }
+
+    content = ramfs_read("notes.txt");
+
+    if (content != 0)
+    {
+        puts("Read succeeded for notes.txt\n");
+        puts("File contents: ");
+        puts(content);
+        puts("\n");
+    }
+    else
+    {
+        puts("Read failed for notes.txt\n");
     }
 
     while (1)

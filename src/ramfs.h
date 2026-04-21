@@ -32,4 +32,7 @@ int ramfs_create(const char *name);
 /* Write text into an existing file. */
 int ramfs_write(const char *name, const char *data);
 
+/* Return the stored contents of a file, or 0 if not found. */
+const char *ramfs_read(const char *name);
+
 #endif

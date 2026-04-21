@@ -128,3 +128,19 @@ int ramfs_write(const char *name, const char *data)
 
     return -1;
 }
+
+/* Return a pointer to a file's stored contents. */
+const char *ramfs_read(const char *name)
+{
+    int i;
+
+    for (i = 0; i < RAMFS_MAX_FILES; i = i + 1)
+    {
+        if (ramfs.files[i].used == 1 && strings_equal(ramfs.files[i].name, name) == 1)
+        {
+            return ramfs.files[i].data;
+        }
+    }
+
+    return 0;
+}
