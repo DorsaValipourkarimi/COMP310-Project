@@ -66,4 +66,10 @@ unsigned int fnv1a_hash(const char *data);
 /* Create one blob from one RAMFS file. */
 int vcs_create_blob_from_file(const char *filename);
 
+/* Create one empty tree. */
+int vcs_create_tree(void);
+
+/* Add one blob into one tree. */
+int vcs_tree_add_blob(int tree_index, int blob_index);
+
 #endif

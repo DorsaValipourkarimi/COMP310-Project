@@ -158,3 +158,65 @@ int vcs_create_blob_from_file(const char *filename)
 
     return free_index;
 }
+
+/* Create one empty tree in the VCS. */
+int vcs_create_tree(void)
+{
+    int i;
+
+    for (i = 0; i < VCS_MAX_TREE_ENTRIES; i = i + 1)
+    {
+        if (vcs.trees[i].used == 0)
+        {
+            vcs.trees[i].used = 1;
+            vcs.trees[i].entry_count = 0;
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+/* Add one blob into one tree. */
+int vcs_tree_add_blob(int tree_index, int blob_index)
+{
+    int entry_index;
+
+    if (tree_index < 0 || tree_index >= VCS_MAX_TREE_ENTRIES)
+    {
+        return -1;
+    }
+
+    if (blob_index < 0 || blob_index >= VCS_MAX_BLOBS)
+    {
+        return -1;
+    }
+
+    if (vcs.trees[tree_index].used == 0)
+    {
+        return -1;
+    }
+
+    if (vcs.blobs[blob_index].used == 0)
+    {
+        return -1;
+    }
+
+    if (vcs.trees[tree_index].entry_count >= VCS_MAX_TREE_ENTRIES)
+    {
+        return -1;
+    }
+
+    entry_index = vcs.trees[tree_index].entry_count;
+
+    vcs.trees[tree_index].entries[entry_index].used = 1;
+    vcs.trees[tree_index].entries[entry_index].blob_index = blob_index;
+    vcs_copy_string(
+        vcs.trees[tree_index].entries[entry_index].filename,
+        vcs.blobs[blob_index].filename,
+        RAMFS_MAX_FILENAME);
+
+    vcs.trees[tree_index].entry_count = vcs.trees[tree_index].entry_count + 1;
+
+    return 0;
+}

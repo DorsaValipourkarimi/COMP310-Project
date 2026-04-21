@@ -47,6 +47,8 @@ void main(void)
     int write_result;
     int delete_result;
     int blob_index;
+    int tree_index;
+    int tree_add_result;
     const char *content;
     unsigned int hash1;
     unsigned int hash2;
@@ -219,6 +221,45 @@ void main(void)
     else
     {
         puts("Blob creation from RAMFS failed.\n");
+    }
+
+    /* Phase 2 Tree */
+    tree_index = vcs_create_tree();
+
+    if (tree_index >= 0)
+    {
+        puts("Tree creation succeeded.\n");
+
+        puts("Tree index: ");
+        print_uint((unsigned int)tree_index);
+        puts("\n");
+    }
+    else
+    {
+        puts("Tree creation failed.\n");
+    }
+
+    tree_add_result = vcs_tree_add_blob(tree_index, blob_index);
+
+    if (tree_add_result == 0)
+    {
+        puts("Blob added to tree successfully.\n");
+
+        puts("Tree entry count: ");
+        print_uint((unsigned int)vcs.trees[tree_index].entry_count);
+        puts("\n");
+
+        puts("Tree entry filename: ");
+        puts(vcs.trees[tree_index].entries[0].filename);
+        puts("\n");
+
+        puts("Tree entry blob index: ");
+        print_uint((unsigned int)vcs.trees[tree_index].entries[0].blob_index);
+        puts("\n");
+    }
+    else
+    {
+        puts("Blob add to tree failed.\n");
     }
 
     while (1)
