@@ -26,4 +26,7 @@ extern ramfs_t ramfs;
 /* Initialize all RAMFS entries as empty. */
 void ramfs_init(void);
 
+/* Create a file with the given name. */
+int ramfs_create(const char *name);
+
 #endif

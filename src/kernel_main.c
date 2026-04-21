@@ -16,11 +16,24 @@ const unsigned int multiboot_header[] __attribute__((section(".multiboot"))) = {
 
 void main(void)
 {
+    int result;
+
     puts("COMP 310 project booted successfully.\n");
     puts("Terminal output layer is working.\n");
 
     ramfs_init();
     puts("RAMFS initialized.\n");
+
+    result = ramfs_create("notes.txt");
+
+    if (result == 0)
+    {
+        puts("Created file: notes.txt\n");
+    }
+    else
+    {
+        puts("Failed to create file: notes.txt\n");
+    }
 
     while (1)
     {
