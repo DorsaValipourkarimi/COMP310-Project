@@ -11,13 +11,15 @@ const unsigned int multiboot_header[] __attribute__((section(".multiboot"))) = {
     24,
     -(MULTIBOOT2_HEADER_MAGIC + 24),
     0,
-    8};
+    8
+};
 
 void main(void)
 {
     int first_result;
     int second_result;
     int write_result;
+    int delete_result;
     const char *content;
 
     puts("COMP 310 project booted successfully.\n");
@@ -71,6 +73,28 @@ void main(void)
     else
     {
         puts("Read failed for notes.txt\n");
+    }
+
+    delete_result = ramfs_delete("notes.txt");
+
+    if (delete_result == 0)
+    {
+        puts("Delete succeeded for notes.txt\n");
+    }
+    else
+    {
+        puts("Delete failed for notes.txt\n");
+    }
+
+    content = ramfs_read("notes.txt");
+
+    if (content == 0)
+    {
+        puts("Read after delete correctly failed.\n");
+    }
+    else
+    {
+        puts("Read after delete did not fail as expected.\n");
     }
 
     while (1)

@@ -144,3 +144,33 @@ const char *ramfs_read(const char *name)
 
     return 0;
 }
+
+/* Delete a file and clear its slot. */
+int ramfs_delete(const char *name)
+{
+    int i;
+    int j;
+
+    for (i = 0; i < RAMFS_MAX_FILES; i = i + 1)
+    {
+        if (ramfs.files[i].used == 1 && strings_equal(ramfs.files[i].name, name) == 1)
+        {
+            ramfs.files[i].used = 0;
+            ramfs.files[i].size = 0;
+
+            for (j = 0; j < RAMFS_MAX_FILENAME; j = j + 1)
+            {
+                ramfs.files[i].name[j] = '\0';
+            }
+
+            for (j = 0; j < RAMFS_MAX_FILESIZE; j = j + 1)
+            {
+                ramfs.files[i].data[j] = '\0';
+            }
+
+            return 0;
+        }
+    }
+
+    return -1;
+}

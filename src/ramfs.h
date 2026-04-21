@@ -35,4 +35,7 @@ int ramfs_write(const char *name, const char *data);
 /* Return the stored contents of a file, or 0 if not found. */
 const char *ramfs_read(const char *name);
 
+/* Delete a file by name. */
+int ramfs_delete(const char *name);
+
 #endif
