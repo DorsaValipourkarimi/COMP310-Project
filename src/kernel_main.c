@@ -16,7 +16,8 @@ const unsigned int multiboot_header[] __attribute__((section(".multiboot"))) = {
 
 void main(void)
 {
-    int result;
+    int first_result;
+    int second_result;
 
     puts("COMP 310 project booted successfully.\n");
     puts("Terminal output layer is working.\n");
@@ -24,15 +25,26 @@ void main(void)
     ramfs_init();
     puts("RAMFS initialized.\n");
 
-    result = ramfs_create("notes.txt");
+    first_result = ramfs_create("notes.txt");
 
-    if (result == 0)
+    if (first_result == 0)
     {
-        puts("Created file: notes.txt\n");
+        puts("First create succeeded: notes.txt\n");
     }
     else
     {
-        puts("Failed to create file: notes.txt\n");
+        puts("First create failed: notes.txt\n");
+    }
+
+    second_result = ramfs_create("notes.txt");
+
+    if (second_result == -1)
+    {
+        puts("Second create correctly failed because file already exists.\n");
+    }
+    else
+    {
+        puts("Second create did not fail as expected.\n");
     }
 
     while (1)
